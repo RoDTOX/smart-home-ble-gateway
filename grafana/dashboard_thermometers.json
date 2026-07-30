@@ -36,6 +36,18 @@
                 "value": "celsius"
               },
               {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "custom.axisSoftMin",
+                "value": 20
+              },
+              {
+                "id": "custom.axisSoftMax",
+                "value": 30
+              },
+              {
                 "id": "color",
                 "value": {
                   "fixedColor": "red",
@@ -57,6 +69,18 @@
               {
                 "id": "unit",
                 "value": "percent"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.axisSoftMin",
+                "value": 30
+              },
+              {
+                "id": "custom.axisSoftMax",
+                "value": 70
               },
               {
                 "id": "color",
@@ -144,6 +168,18 @@
                 "value": "celsius"
               },
               {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "custom.axisSoftMin",
+                "value": 20
+              },
+              {
+                "id": "custom.axisSoftMax",
+                "value": 30
+              },
+              {
                 "id": "color",
                 "value": {
                   "fixedColor": "orange",
@@ -165,6 +201,18 @@
               {
                 "id": "unit",
                 "value": "percent"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.axisSoftMin",
+                "value": 30
+              },
+              {
+                "id": "custom.axisSoftMax",
+                "value": 70
               },
               {
                 "id": "color",
@@ -252,6 +300,18 @@
                 "value": "celsius"
               },
               {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "custom.axisSoftMin",
+                "value": 20
+              },
+              {
+                "id": "custom.axisSoftMax",
+                "value": 30
+              },
+              {
                 "id": "color",
                 "value": {
                   "fixedColor": "yellow",
@@ -273,6 +333,18 @@
               {
                 "id": "unit",
                 "value": "percent"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.axisSoftMin",
+                "value": 30
+              },
+              {
+                "id": "custom.axisSoftMax",
+                "value": 70
               },
               {
                 "id": "color",
@@ -349,6 +421,8 @@
             "axisColorMode": "text",
             "axisLabel": "Temperature (°C)",
             "axisPlacement": "left",
+            "axisSoftMax": 30,
+            "axisSoftMin": 20,
             "drawStyle": "line",
             "fillOpacity": 8,
             "lineInterpolation": "smooth",
@@ -357,6 +431,7 @@
             "showPoints": "never",
             "spanNulls": true
           },
+          "decimals": 1,
           "unit": "celsius"
         },
         "overrides": []
@@ -412,6 +487,8 @@
             "axisColorMode": "text",
             "axisLabel": "Humidity (%)",
             "axisPlacement": "left",
+            "axisSoftMax": 70,
+            "axisSoftMin": 30,
             "drawStyle": "line",
             "fillOpacity": 8,
             "lineInterpolation": "smooth",
@@ -420,6 +497,7 @@
             "showPoints": "never",
             "spanNulls": true
           },
+          "decimals": 0,
           "unit": "percent"
         },
         "overrides": []
@@ -634,5 +712,5 @@
   "timezone": "browser",
   "title": "Room Thermometers Telemetry",
   "uid": "a63cb8c2-987e-47c3-a453-27c9a2eaf01b",
-  "version": 14
+  "version": 15
 }
