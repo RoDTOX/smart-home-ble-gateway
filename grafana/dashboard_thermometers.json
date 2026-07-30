@@ -40,14 +40,6 @@
                 "value": 1
               },
               {
-                "id": "custom.axisSoftMin",
-                "value": 20
-              },
-              {
-                "id": "custom.axisSoftMax",
-                "value": 30
-              },
-              {
                 "id": "color",
                 "value": {
                   "fixedColor": "red",
@@ -73,14 +65,6 @@
               {
                 "id": "decimals",
                 "value": 0
-              },
-              {
-                "id": "custom.axisSoftMin",
-                "value": 30
-              },
-              {
-                "id": "custom.axisSoftMax",
-                "value": 70
               },
               {
                 "id": "color",
@@ -123,7 +107,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT recorded_at AS \"time\", temperature AS \"Temperature (°C)\" FROM thermometer_telemetry WHERE device_name = 'Kids Room' AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
+          "rawSql": "SELECT recorded_at AS \"time\", ROUND(AVG(temperature) OVER (ORDER BY recorded_at ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)::numeric, 1) AS \"Temperature (°C)\" FROM thermometer_telemetry WHERE device_name = 'Kids Room' AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
           "refId": "A"
         },
         {
@@ -134,7 +118,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT recorded_at AS \"time\", humidity AS \"Humidity (%)\" FROM thermometer_telemetry WHERE device_name = 'Kids Room' AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
+          "rawSql": "SELECT recorded_at AS \"time\", ROUND(AVG(humidity) OVER (ORDER BY recorded_at ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)::numeric, 1) AS \"Humidity (%)\" FROM thermometer_telemetry WHERE device_name = 'Kids Room' AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
           "refId": "B"
         }
       ],
@@ -172,14 +156,6 @@
                 "value": 1
               },
               {
-                "id": "custom.axisSoftMin",
-                "value": 20
-              },
-              {
-                "id": "custom.axisSoftMax",
-                "value": 30
-              },
-              {
                 "id": "color",
                 "value": {
                   "fixedColor": "orange",
@@ -205,14 +181,6 @@
               {
                 "id": "decimals",
                 "value": 0
-              },
-              {
-                "id": "custom.axisSoftMin",
-                "value": 30
-              },
-              {
-                "id": "custom.axisSoftMax",
-                "value": 70
               },
               {
                 "id": "color",
@@ -255,7 +223,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT recorded_at AS \"time\", temperature AS \"Temperature (°C)\" FROM thermometer_telemetry WHERE device_name = 'Living Room' AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
+          "rawSql": "SELECT recorded_at AS \"time\", ROUND(AVG(temperature) OVER (ORDER BY recorded_at ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)::numeric, 1) AS \"Temperature (°C)\" FROM thermometer_telemetry WHERE device_name = 'Living Room' AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
           "refId": "A"
         },
         {
@@ -266,7 +234,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT recorded_at AS \"time\", humidity AS \"Humidity (%)\" FROM thermometer_telemetry WHERE device_name = 'Living Room' AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
+          "rawSql": "SELECT recorded_at AS \"time\", ROUND(AVG(humidity) OVER (ORDER BY recorded_at ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)::numeric, 1) AS \"Humidity (%)\" FROM thermometer_telemetry WHERE device_name = 'Living Room' AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
           "refId": "B"
         }
       ],
@@ -304,14 +272,6 @@
                 "value": 1
               },
               {
-                "id": "custom.axisSoftMin",
-                "value": 20
-              },
-              {
-                "id": "custom.axisSoftMax",
-                "value": 30
-              },
-              {
                 "id": "color",
                 "value": {
                   "fixedColor": "yellow",
@@ -337,14 +297,6 @@
               {
                 "id": "decimals",
                 "value": 0
-              },
-              {
-                "id": "custom.axisSoftMin",
-                "value": 30
-              },
-              {
-                "id": "custom.axisSoftMax",
-                "value": 70
               },
               {
                 "id": "color",
@@ -387,7 +339,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT recorded_at AS \"time\", temperature AS \"Temperature (°C)\" FROM thermometer_telemetry WHERE device_name = 'Bathroom' AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
+          "rawSql": "SELECT recorded_at AS \"time\", ROUND(AVG(temperature) OVER (ORDER BY recorded_at ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)::numeric, 1) AS \"Temperature (°C)\" FROM thermometer_telemetry WHERE device_name = 'Bathroom' AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
           "refId": "A"
         },
         {
@@ -398,7 +350,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT recorded_at AS \"time\", humidity AS \"Humidity (%)\" FROM thermometer_telemetry WHERE device_name = 'Bathroom' AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
+          "rawSql": "SELECT recorded_at AS \"time\", ROUND(AVG(humidity) OVER (ORDER BY recorded_at ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)::numeric, 1) AS \"Humidity (%)\" FROM thermometer_telemetry WHERE device_name = 'Bathroom' AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
           "refId": "B"
         }
       ],
@@ -421,8 +373,6 @@
             "axisColorMode": "text",
             "axisLabel": "Temperature (°C)",
             "axisPlacement": "left",
-            "axisSoftMax": 30,
-            "axisSoftMin": 20,
             "drawStyle": "line",
             "fillOpacity": 8,
             "lineInterpolation": "smooth",
@@ -464,7 +414,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT recorded_at AS \"time\", device_name, temperature FROM thermometer_telemetry WHERE device_name IN ($device) AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
+          "rawSql": "SELECT recorded_at AS \"time\", device_name, ROUND(AVG(temperature) OVER (PARTITION BY device_name ORDER BY recorded_at ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)::numeric, 1) AS temperature FROM thermometer_telemetry WHERE device_name IN ($device) AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
           "refId": "A"
         }
       ],
@@ -487,8 +437,6 @@
             "axisColorMode": "text",
             "axisLabel": "Humidity (%)",
             "axisPlacement": "left",
-            "axisSoftMax": 70,
-            "axisSoftMin": 30,
             "drawStyle": "line",
             "fillOpacity": 8,
             "lineInterpolation": "smooth",
@@ -530,7 +478,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT recorded_at AS \"time\", device_name, humidity FROM thermometer_telemetry WHERE device_name IN ($device) AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
+          "rawSql": "SELECT recorded_at AS \"time\", device_name, ROUND(AVG(humidity) OVER (PARTITION BY device_name ORDER BY recorded_at ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)::numeric, 1) AS humidity FROM thermometer_telemetry WHERE device_name IN ($device) AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
           "refId": "A"
         }
       ],
@@ -712,5 +660,5 @@
   "timezone": "browser",
   "title": "Room Thermometers Telemetry",
   "uid": "a63cb8c2-987e-47c3-a453-27c9a2eaf01b",
-  "version": 15
+  "version": 17
 }
