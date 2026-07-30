@@ -25,21 +25,17 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 
 BTSNOOP_PATH = "/data/log/bt/btsnoop_hci.log"
 DEVICES_CONFIG = "/data/data/com.termux/files/home/smart-home-ble-gateway/config/devices.json"
+DEVICES_CONFIG_EXAMPLE = "/data/data/com.termux/files/home/smart-home-ble-gateway/config/devices.json.example"
 MQTT_BROKER = "127.0.0.1"
 MQTT_PORT = 1883
 MQTT_TOPIC_PREFIX = "home/sensors/ble"
 TCP_PORT = 9999
 
-DEFAULT_BIND_KEYS = [
-    bytes.fromhex("16AAE9F42FFE437FC8F712C30A0E61EF"), # Kids Room legacy
-    bytes.fromhex("683131FD435DC2CC95198744DBBD5D3C"), # Kids Room current flasher bindkey
-]
-
 mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id="a6_ble_telemetry_engine")
 
 _last_config_check = 0
 _cached_device_map = {}
-_cached_bind_keys = list(DEFAULT_BIND_KEYS)
+_cached_bind_keys = []
 _seen_macs = set()
 _device_last_seen = {}
 _device_last_interval = {}
@@ -50,12 +46,13 @@ def get_device_config():
     now = time.time()
     if now - _last_config_check > 5:
         _last_config_check = now
-        if os.path.exists(DEVICES_CONFIG):
+        cfg_path = DEVICES_CONFIG if os.path.exists(DEVICES_CONFIG) else (DEVICES_CONFIG_EXAMPLE if os.path.exists(DEVICES_CONFIG_EXAMPLE) else None)
+        if cfg_path:
             try:
-                with open(DEVICES_CONFIG, "r") as f:
+                with open(cfg_path, "r") as f:
                     raw_cfg = json.load(f)
                     new_map = {}
-                    new_keys = list(DEFAULT_BIND_KEYS)
+                    new_keys = []
                     for mac, val in raw_cfg.items():
                         mac_upper = mac.upper()
                         if isinstance(val, str):
@@ -85,14 +82,7 @@ def connect_mqtt():
 
 def get_fallback_ble_name(mac_str):
     mac_clean = mac_str.replace(":", "").upper()
-    if mac_clean == "A4C13884A1E8":
-        return "ATC_84A1E8"
-    elif mac_clean == "A4C138A4C1DD":
-        return "ATC_A4C1DD"
-    elif mac_clean == "A4C138940F44":
-        return "ATC_940F44"
-    else:
-        return f"ATC_{mac_clean[-6:]}"
+    return f"ATC_{mac_clean[-6:]}"
 
 def decrypt_mibeacon(ad_data):
     if len(ad_data) < 17:

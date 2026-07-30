@@ -1,0 +1,12 @@
+{
+  "A4:C1:38:00:00:01": {
+    "name": "Kids Room",
+    "bind_key": "00112233445566778899aabbccddeeff"
+  },
+  "A4:C1:38:00:00:02": {
+    "name": "Living Room"
+  },
+  "A4:C1:38:00:00:03": {
+    "name": "Bathroom"
+  }
+}

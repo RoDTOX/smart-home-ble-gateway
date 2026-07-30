@@ -1,3 +1,6 @@
+# Secrets & Local Configuration
+config/devices.json
+
 # Python
 __pycache__/
 *.py[cod]
