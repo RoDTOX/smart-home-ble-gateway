@@ -1,0 +1,12 @@
+{
+  "A4:C1:38:84:A1:E8": {
+    "name": "Kids Room",
+    "bind_key": "683131fd435dc2cc95198744dbbd5d3c"
+  },
+  "A4:C1:38:A4:C1:DD": {
+    "name": "Living Room"
+  },
+  "A4:C1:38:94:0F:44": {
+    "name": "Bathroom"
+  }
+}
