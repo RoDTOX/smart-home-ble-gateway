@@ -36,8 +36,12 @@
                 "value": "celsius"
               },
               {
-                "id": "decimals",
-                "value": 1
+                "id": "min",
+                "value": 15
+              },
+              {
+                "id": "max",
+                "value": 35
               },
               {
                 "id": "color",
@@ -49,14 +53,6 @@
               {
                 "id": "custom.axisPlacement",
                 "value": "left"
-              },
-              {
-                "id": "custom.softMin",
-                "value": 20
-              },
-              {
-                "id": "custom.softMax",
-                "value": 30
               }
             ]
           },
@@ -71,8 +67,12 @@
                 "value": "percent"
               },
               {
-                "id": "decimals",
-                "value": 1
+                "id": "min",
+                "value": 20
+              },
+              {
+                "id": "max",
+                "value": 80
               },
               {
                 "id": "color",
@@ -84,14 +84,6 @@
               {
                 "id": "custom.axisPlacement",
                 "value": "right"
-              },
-              {
-                "id": "custom.softMin",
-                "value": 30
-              },
-              {
-                "id": "custom.softMax",
-                "value": 70
               }
             ]
           }
@@ -168,8 +160,12 @@
                 "value": "celsius"
               },
               {
-                "id": "decimals",
-                "value": 1
+                "id": "min",
+                "value": 15
+              },
+              {
+                "id": "max",
+                "value": 35
               },
               {
                 "id": "color",
@@ -181,14 +177,6 @@
               {
                 "id": "custom.axisPlacement",
                 "value": "left"
-              },
-              {
-                "id": "custom.softMin",
-                "value": 20
-              },
-              {
-                "id": "custom.softMax",
-                "value": 30
               }
             ]
           },
@@ -203,8 +191,12 @@
                 "value": "percent"
               },
               {
-                "id": "decimals",
-                "value": 1
+                "id": "min",
+                "value": 20
+              },
+              {
+                "id": "max",
+                "value": 80
               },
               {
                 "id": "color",
@@ -216,14 +208,6 @@
               {
                 "id": "custom.axisPlacement",
                 "value": "right"
-              },
-              {
-                "id": "custom.softMin",
-                "value": 30
-              },
-              {
-                "id": "custom.softMax",
-                "value": 70
               }
             ]
           }
@@ -300,8 +284,12 @@
                 "value": "celsius"
               },
               {
-                "id": "decimals",
-                "value": 1
+                "id": "min",
+                "value": 15
+              },
+              {
+                "id": "max",
+                "value": 35
               },
               {
                 "id": "color",
@@ -313,14 +301,6 @@
               {
                 "id": "custom.axisPlacement",
                 "value": "left"
-              },
-              {
-                "id": "custom.softMin",
-                "value": 20
-              },
-              {
-                "id": "custom.softMax",
-                "value": 30
               }
             ]
           },
@@ -335,8 +315,12 @@
                 "value": "percent"
               },
               {
-                "id": "decimals",
-                "value": 1
+                "id": "min",
+                "value": 20
+              },
+              {
+                "id": "max",
+                "value": 80
               },
               {
                 "id": "color",
@@ -348,14 +332,6 @@
               {
                 "id": "custom.axisPlacement",
                 "value": "right"
-              },
-              {
-                "id": "custom.softMin",
-                "value": 30
-              },
-              {
-                "id": "custom.softMax",
-                "value": 70
               }
             ]
           }
@@ -427,11 +403,10 @@
             "lineWidth": 2,
             "pointSize": 4,
             "showPoints": "never",
-            "softMin": 20,
-            "softMax": 30,
             "spanNulls": true
           },
-          "decimals": 1,
+          "min": 15,
+          "max": 35,
           "unit": "celsius"
         },
         "overrides": []
@@ -493,11 +468,10 @@
             "lineWidth": 2,
             "pointSize": 4,
             "showPoints": "never",
-            "softMin": 30,
-            "softMax": 70,
             "spanNulls": true
           },
-          "decimals": 1,
+          "min": 20,
+          "max": 80,
           "unit": "percent"
         },
         "overrides": []
@@ -713,5 +687,5 @@
   "timezone": "browser",
   "title": "Room Thermometers Telemetry",
   "uid": "a63cb8c2-987e-47c3-a453-27c9a2eaf01b",
-  "version": 15
+  "version": 16
 }
