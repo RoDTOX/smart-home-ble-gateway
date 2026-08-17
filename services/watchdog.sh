@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 # ==============================================================================
-# PROJECT CINDERELLA - AUTONOMOUS WATCHDOG & SELF-HEALING ENGINE v1.3
+# PROJECT CINDERELLA - AUTONOMOUS WATCHDOG & SELF-HEALING ENGINE v1.4
 # Target: Samsung Galaxy A6 (Termux + Debian proot)
 # Supervised: Network, SSHD, TeslaMate, Grafana, Tailscale, Smart Home BLE Gateway
 # ==============================================================================
@@ -15,7 +15,7 @@ log_msg() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
 }
 
-log_msg "=== WATCHDOG ENGINE INITIALIZED (with Smart Home BLE Supervision) ==="
+log_msg "=== WATCHDOG ENGINE INITIALIZED (v1.4) ==="
 
 while true; do
     CYCLE_COUNT=$((CYCLE_COUNT + 1))
@@ -69,15 +69,10 @@ while true; do
 
     # --- 6. SMART HOME BLE GATEWAY SUPERVISION ---
     if ! pgrep -f "btsnoop_scanner.py" > /dev/null 2>&1 || ! pgrep -f "db_logger.py" > /dev/null 2>&1; then
-        log_msg "[REPAIR] BLE Gateway processes died! Restarting btsnoop_scanner & db_logger..."
+        log_msg "[REPAIR] BLE Gateway processes died! Restarting..."
         su -c "am start -n com.smarthome.ble/.MainActivity" > /dev/null 2>&1
         sleep 2
-        if ! pgrep -f "db_logger.py" > /dev/null 2>&1; then
-            nohup /data/data/com.termux/files/usr/bin/python3 -u /data/data/com.termux/files/home/smart-home-ble-gateway/services/db_logger.py > /data/data/com.termux/files/home/db_logger.log 2>&1 &
-        fi
-        if ! pgrep -f "btsnoop_scanner.py" > /dev/null 2>&1; then
-            nohup /data/data/com.termux/files/usr/bin/python3 -u /data/data/com.termux/files/home/smart-home-ble-gateway/services/btsnoop_scanner.py > /data/data/com.termux/files/home/btsnoop_scanner.log 2>&1 &
-        fi
+        bash /data/data/com.termux/files/home/smart-home-ble-gateway/services/run_gateway.sh > /dev/null 2>&1 &
         log_msg "[OK] BLE Gateway processes restored."
     fi
 
