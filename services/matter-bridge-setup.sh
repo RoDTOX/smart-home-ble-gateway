@@ -4,43 +4,26 @@
 
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WORK_DIR="/opt/smart-home-matter-bridge"
+
 echo "[1/4] Checking Python & Node.js environments..."
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get install -y python3 python3-pip python3-bleak python3-paho-mqtt bluetooth bluez nodejs npm || true
+apt-get install -y python3 python3-pip python3-paho-mqtt bluetooth bluez nodejs npm || true
 
-WORK_DIR="/opt/smart-home-matter-bridge"
+echo "[2/4] Initializing Matter Bridge package..."
 mkdir -p "$WORK_DIR"
 cd "$WORK_DIR"
 
-echo "[2/4] Initializing Matter Bridge package..."
 if [ ! -f "package.json" ]; then
     npm init -y >/dev/null
-    npm install --production @project-chip/matter.js mqtt || true
+    npm install --production @project-chip/matter-node.js @project-chip/matter.js mqtt || true
 fi
 
-echo "[3/4] Creating Matter Bridge Service script..."
-cat << 'NODE_SCRIPT' > index.js
-const { ServerNode, TemperatureSensorDevice, HumiditySensorDevice } = require("@project-chip/matter.js");
-const mqtt = require("mqtt");
+echo "[3/4] Linking Matter Bridge Service script..."
+cp -f "$SCRIPT_DIR/matter_bridge.js" "$WORK_DIR/index.js"
+chmod +x "$WORK_DIR/index.js"
 
-const client = mqtt.connect("mqtt://localhost:1883");
+echo "[4/4] Setup complete! To start Matter bridge: node $WORK_DIR/index.js"
 
-client.on("connect", () => {
-    console.log("[MQTT] Connected to local A6 Mosquitto Broker");
-    client.subscribe("home/sensors/ble/#");
-});
-
-client.on("message", (topic, message) => {
-    try {
-        const payload = JSON.parse(message.toString());
-        console.log(`[MQTT] Received on ${topic}:`, payload);
-    } catch (e) {
-        console.error("[MQTT] Parse error:", e.message);
-    }
-});
-
-console.log("[Matter] Bridge Initialized. Ready for Google Home Pairing.");
-NODE_SCRIPT
-
-echo "[4/4] Setup complete!"

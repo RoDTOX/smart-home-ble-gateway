@@ -13,16 +13,22 @@ A 100% software-based IoT gateway running directly on a **Samsung Galaxy A6 ("Ci
    │ (BLE Advertising Beacons - BTHome v2 / PVVX / MiBeacon)
    ▼
 [ Samsung Galaxy A6 (Android 9 / Termux / Debian Proot) ]
+   ├── Master Startup Launcher (services/start-smarthome.sh)
+   │     └── Standalone initialization (WakeLock, Doze, Bluetooth, Daemons & Watchdog)
    ├── Native Foreground Scanner APK (com.smarthome.ble, TargetSDK 28)
+   │     └── Keeps BluetoothLeScanner active on screen off
    ├── BTSnoop HCI Log Tailer Engine (services/btsnoop_scanner.py)
    │     ├── Decodes BTHome v2 (Unencrypted & AES-128 CCM Encrypted)
-   │     ├── Extracts Live BLE Advertised Local Names & Hardware Metadata
-   │     └── Calculates Real-Time Transmission Intervals (Δt)
+   │     ├── Extracts Live BLE Advertised Names & Transmission Intervals (Δt)
+   │     ├── RotatingFileHandler (maxBytes=5MB, backupCount=2)
+   │     └── Exponential backoff error handling
    ├── Mosquitto MQTT Broker (localhost:1883)
    ├── PostgreSQL Telemetry Logger (services/db_logger.py)
-   │     └── Ingests to smart_home_db & teslamate DBs
-   ├── Autonomous Self-Healing Watchdog (services/watchdog.sh v1.4)
-   │     └── Auto-recovers BLE scanner, DB logger, Grafana & Network
+   │     ├── Ingests to smart_home_db (thermometer_telemetry)
+   │     └── RotatingFileHandler (maxBytes=5MB, backupCount=2)
+   ├── Dedicated Autonomous Watchdog (services/smarthome_watchdog.sh v2.0)
+   │     ├── Supervises BLE daemons, MQTT, PostgreSQL, Wakelock & Bluetooth
+   │     └── Exponential backoff cooldown (5 minutes delay after 3 consecutive failures)
    ├── Matter Bridge (Node.js / Matter.js) ───────► Google Home App
    └── Grafana Telemetry Dashboard (localhost:3000)
 ```
@@ -35,9 +41,9 @@ A 100% software-based IoT gateway running directly on a **Samsung Galaxy A6 ("Ci
 - **Power-Saving BTHome v2 Protocol:** Optimized for 2+ years sensor battery life (10s–20s advertising interval, `Duplicates: 2`, `LowPower mode`).
 - **Real-Time HCI BTSnoop Engine:** Directly tails `/data/log/bt/btsnoop_hci.log` at the Android HCI kernel level for zero packet drop, bypassing Android 9 background screen-off scan restrictions.
 - **Dynamic Device & Encryption Management:** Support for dynamic MAC-to-Room mapping (`config/devices.json`) and AES-128 CCM decryption using Telink Flasher bind keys.
-- **Autonomous Boot & Self-Healing Watchdog:**
-  - `start-teslamate.sh` launches all services automatically at boot via `Termux:Boot`.
-  - `watchdog.sh` supervises and auto-restarts the BLE daemons, PostgreSQL logger, Grafana, SSH, and Wi-Fi connection.
+- **Automatic Log Rotation (Safety Bound <= 15MB):** Internal Python `RotatingFileHandler` bounds both scanner and database logger output to 5MB files with 2 historical backups, eliminating unconstrained disk growth.
+- **Intelligent Error Backoff:** Watchdog and log tailer employ progressive exponential backoff (up to 5 minutes pause after 3 consecutive restart failures), preventing Android process storms and runaway loops if Bluetooth is toggled.
+- **Fully Decoupled Architecture:** Runs independently via `start-smarthome.sh` and `smarthome_watchdog.sh` without any dependency or coupling to TeslaMate.
 - **Rich Grafana Telemetry Dashboard:** Includes smooth connected time-series graphs (`spanNulls: true`), clean Y-axis scale bounds (15–35°C / 20–80%), 2-decimal precision, 30s auto-refresh, all-room comparison panels, hardware status table, and metadata legend.
 
 ---
@@ -53,17 +59,20 @@ smart-home-ble-gateway/
 │   ├── build_and_install.sh           # On-device APK compiler & installer script
 │   └── src/com/smarthome/ble/         # Java BLE foreground service source code
 ├── config/
+│   ├── devices.json                   # Active MAC-to-Room configuration
 │   └── devices.json.example           # Sanitized MAC-to-Room mapping & bind keys template
 ├── db/
-│   └── init_tables.sql                # PostgreSQL table schema
+│   └── init_tables.sql                # PostgreSQL table schema (with metadata columns)
 ├── grafana/
 │   └── dashboard_thermometers.json    # Complete Grafana dashboard (v17, 2-decimal precision)
 └── services/
+    ├── start-smarthome.sh             # Master standalone startup script for Smart Home
+    ├── smarthome_watchdog.sh          # Dedicated self-healing watchdog with backoff (v2.0)
     ├── btsnoop_scanner.py             # BTSnoop HCI real-time BLE telemetry engine
     ├── db_logger.py                   # PostgreSQL MQTT ingestion daemon
     ├── run_gateway.sh                 # Gateway process launcher with root privilege escalation
-    ├── start-teslamate.sh             # Master startup script for Termux:Boot
-    ├── watchdog.sh                    # Autonomous self-healing guardian engine v1.4
+    ├── start-teslamate.sh             # Modular TeslaMate startup script
+    ├── watchdog.sh                    # TeslaMate & system health guardian
     ├── setup_magisk_autoboot.sh       # Persistent Magisk module for auto-boot on AC connect
     ├── matter-bridge-setup.sh         # Matter Bridge installer for Google Home
     └── metrics_pusher.sh              # System metrics collector
@@ -109,7 +118,17 @@ chmod +x deploy-a6.sh services/*.sh
 ./deploy-a6.sh
 ```
 
-### 4. Import Grafana Dashboard
+### 4. Standalone Service Management
+To manually start or stop Smart Home BLE Gateway independently:
+```bash
+# Start Gateway & Watchdog:
+bash ~/smart-home-ble-gateway/services/start-smarthome.sh
+
+# Stop all Smart Home processes:
+pkill -f smarthome_watchdog.sh; pkill -9 -f btsnoop_scanner.py; pkill -9 -f db_logger.py
+```
+
+### 5. Import Grafana Dashboard
 - Open Grafana at `http://<A6_IP>:3000` (Default credentials: `admin` / `admin`).
 - Navigate to **Dashboards** -> **Import**.
 - Upload or paste `grafana/dashboard_thermometers.json`.
@@ -132,8 +151,11 @@ CREATE TABLE IF NOT EXISTS thermometer_telemetry (
     ble_name VARCHAR(64),
     hw_ver VARCHAR(32),
     sw_ver VARCHAR(32),
-    recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    recorded_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE INDEX IF NOT EXISTS idx_telemetry_mac_time 
+ON thermometer_telemetry(device_mac, recorded_at DESC);
 ```
 
 ---
@@ -141,3 +163,4 @@ CREATE TABLE IF NOT EXISTS thermometer_telemetry (
 ## License
 
 MIT License. Designed & Developed for Smart Home Automation.
+

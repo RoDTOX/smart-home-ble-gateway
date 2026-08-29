@@ -33,8 +33,6 @@ tmux kill-session -t teslamate 2>/dev/null
 pkill -f metrics_pusher.sh 2>/dev/null
 pkill -f alert_manager.sh 2>/dev/null
 pkill -f watchdog.sh 2>/dev/null
-pkill -9 -f db_logger.py 2>/dev/null
-pkill -9 -f btsnoop_scanner.py 2>/dev/null
 echo "[OK] Sesiuni vechi curatate."
 
 # --- 3. LANSARE SERVICII ---
@@ -47,18 +45,18 @@ echo "[+] Se porneste telemetria in fundal..."
 [ -f "./metrics_pusher.sh" ] && nohup ./metrics_pusher.sh > /dev/null 2>&1 &
 [ -f "./alert_manager.sh" ] && nohup ./alert_manager.sh > /dev/null 2>&1 &
 
-# Pornire Smart Home BLE Gateway (Xiaomi Thermometers)
-echo "[+] Se porneste Smart Home BLE Gateway..."
-su -c "am start -n com.smarthome.ble/.MainActivity" > /dev/null 2>&1
-sleep 3
-bash /data/data/com.termux/files/home/smart-home-ble-gateway/services/run_gateway.sh > /dev/null 2>&1 &
-echo "[OK] Smart Home BLE Gateway activat."
+# Pornire Smart Home BLE Gateway (Modul Separat)
+SMARTHOME_START="/data/data/com.termux/files/home/smart-home-ble-gateway/services/start-smarthome.sh"
+if [ -f "$SMARTHOME_START" ]; then
+    echo "[+] Se porneste Smart Home BLE Gateway (Modul Independent)..."
+    bash "$SMARTHOME_START"
+fi
 
-# Pornire Watchdog (Gardianul Autonom de Auto-Reparare)
+# Pornire Watchdog TeslaMate (Gardianul Autonom de Auto-Reparare)
 if [ -f "./watchdog.sh" ]; then
     chmod +x ./watchdog.sh ./view.sh 2>/dev/null
     nohup ./watchdog.sh > /dev/null 2>&1 &
-    echo "[OK] Watchdog activat (Auto-reparare rețea, SSH, TeslaMate, Grafana & BLE Gateway)."
+    echo "[OK] Watchdog TeslaMate activat (Auto-reparare rețea, SSH, TeslaMate & Grafana)."
 fi
 
 # --- 4. ACTIVARE REȚEA EXTERNĂ (LA FINAL) ---

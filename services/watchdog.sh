@@ -67,19 +67,11 @@ while true; do
         FAIL_COUNT_GRAFANA=0
     fi
 
-    # --- 6. SMART HOME BLE GATEWAY SUPERVISION ---
-    if ! pgrep -f "btsnoop_scanner.py" > /dev/null 2>&1 || ! pgrep -f "db_logger.py" > /dev/null 2>&1; then
-        log_msg "[REPAIR] BLE Gateway processes died! Restarting..."
-        su -c "am start -n com.smarthome.ble/.MainActivity" > /dev/null 2>&1
-        sleep 2
-        bash /data/data/com.termux/files/home/smart-home-ble-gateway/services/run_gateway.sh > /dev/null 2>&1 &
-        log_msg "[OK] BLE Gateway processes restored."
-    fi
-
-    # --- 7. TAILSCALE KEEPALIVE (Every ~5 Minutes / 10 Cycles) ---
+    # --- 6. TAILSCALE KEEPALIVE (Every ~5 Minutes / 10 Cycles) ---
     if [ $((CYCLE_COUNT % 10)) -eq 0 ]; then
         su -c "monkey -p com.tailscale.ipn 1" > /dev/null 2>&1
     fi
 
     sleep 30
 done
+
