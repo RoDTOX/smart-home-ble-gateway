@@ -46,10 +46,14 @@ echo "[+] Se porneste telemetria in fundal..."
 [ -f "./alert_manager.sh" ] && nohup ./alert_manager.sh > /dev/null 2>&1 &
 
 # Pornire Smart Home BLE Gateway (Modul Separat)
-SMARTHOME_START="/data/data/com.termux/files/home/smart-home-ble-gateway/services/start-smarthome.sh"
-if [ -f "$SMARTHOME_START" ]; then
-    echo "[+] Se porneste Smart Home BLE Gateway (Modul Independent)..."
-    bash "$SMARTHOME_START"
+SMARTHOME_DIR="/data/data/com.termux/files/home/smart-home-ble-gateway"
+[ ! -d "$SMARTHOME_DIR" ] && SMARTHOME_DIR="$HOME/smart-home-ble-gateway"
+
+if [ -d "$SMARTHOME_DIR" ]; then
+    echo "[+] Se porneste automat Smart Home BLE Gateway..."
+    (cd "$SMARTHOME_DIR" && git pull origin main > /dev/null 2>&1 || true)
+    bash "$SMARTHOME_DIR/services/start-smarthome.sh" > /dev/null 2>&1 &
+    echo "[OK] Smart Home BLE Gateway activat automat la boot."
 fi
 
 # Pornire Watchdog TeslaMate (Gardianul Autonom de Auto-Reparare)
