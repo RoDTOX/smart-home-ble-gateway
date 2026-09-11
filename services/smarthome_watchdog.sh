@@ -53,7 +53,7 @@ while true; do
     fi
 
     # --- 3. MQTT BROKER REACHABILITY CHECK ---
-    if ! nc -z 127.0.0.1 1883 2>/dev/null; then
+    if ! timeout 2 bash -c "cat < /dev/null > /dev/tcp/127.0.0.1/1883" 2>/dev/null; then
         log_msg "[WARNING] Mosquitto MQTT broker (127.0.0.1:1883) not responding."
     fi
 
@@ -61,7 +61,7 @@ while true; do
     SCANNER_RUNNING=0
     LOGGER_RUNNING=0
     
-    if pgrep -f "btsnoop_scanner.py" > /dev/null 2>&1; then
+    if su -c "pgrep -f btsnoop_scanner.py" > /dev/null 2>&1; then
         SCANNER_RUNNING=1
     fi
     if pgrep -f "db_logger.py" > /dev/null 2>&1; then

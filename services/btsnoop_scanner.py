@@ -21,9 +21,23 @@ import threading
 import socket
 import paho.mqtt.client as mqtt
 from Crypto.Cipher import AES
+try:
+    import fcntl
+except ImportError:
+    fcntl = None
 
 LOG_DIR = os.environ.get("SMARTHOME_LOG_DIR", "/data/data/com.termux/files/home" if os.path.exists("/data/data/com.termux/files/home") else ".")
 LOG_FILE = os.environ.get("BTSNOOP_SCANNER_LOG", os.path.join(LOG_DIR, "btsnoop_scanner.log"))
+LOCK_FILE = os.environ.get("BTSNOOP_SCANNER_LOCK", os.path.join(LOG_DIR, ".btsnoop_scanner.lock"))
+
+if fcntl:
+    try:
+        _lock_file = open(LOCK_FILE, "w")
+        fcntl.flock(_lock_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except (IOError, BlockingIOError, OSError) as e:
+        sys.stderr.write(f"btsnoop_scanner: another instance is running or lock unavailable ({e}). Exiting.\n")
+        sys.exit(0)
+
 
 # Setup root logging with RotatingFileHandler (5MB x 2 backups) + StreamHandler
 root_logger = logging.getLogger()

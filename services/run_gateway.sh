@@ -9,7 +9,7 @@ GATEWAY_DIR="/data/data/com.termux/files/home/smart-home-ble-gateway"
 [ ! -d "$GATEWAY_DIR" ] && GATEWAY_DIR="$HOME/smart-home-ble-gateway"
 
 # 1. Clean up existing daemon instances
-pkill -9 -f btsnoop_scanner.py 2>/dev/null || true
+su -c "pkill -9 -f btsnoop_scanner.py 2>/dev/null || true"
 pkill -9 -f db_logger.py 2>/dev/null || true
 sleep 1
 

@@ -15,9 +15,23 @@ import logging
 from logging.handlers import RotatingFileHandler
 import psycopg2
 import paho.mqtt.client as mqtt
+try:
+    import fcntl
+except ImportError:
+    fcntl = None
 
 LOG_DIR = os.environ.get("SMARTHOME_LOG_DIR", "/data/data/com.termux/files/home" if os.path.exists("/data/data/com.termux/files/home") else ".")
 LOG_FILE = os.environ.get("DB_LOGGER_LOG", os.path.join(LOG_DIR, "db_logger.log"))
+LOCK_FILE = os.environ.get("DB_LOGGER_LOCK", os.path.join(LOG_DIR, ".db_logger.lock"))
+
+if fcntl:
+    try:
+        _lock_file = open(LOCK_FILE, "w")
+        fcntl.flock(_lock_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except (IOError, BlockingIOError, OSError) as e:
+        sys.stderr.write(f"db_logger: another instance is running or lock unavailable ({e}). Exiting.\n")
+        sys.exit(0)
+
 
 # Setup root logging with RotatingFileHandler (5MB x 2 backups) + StreamHandler
 root_logger = logging.getLogger()

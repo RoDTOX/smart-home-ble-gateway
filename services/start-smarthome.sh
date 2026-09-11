@@ -41,7 +41,7 @@ fi
 # --- 3. PROCESS CLEANUP ---
 echo "[3/5] Cleaning up old Smart Home processes..."
 pkill -f smarthome_watchdog.sh 2>/dev/null || true
-pkill -9 -f btsnoop_scanner.py 2>/dev/null || true
+su -c "pkill -9 -f btsnoop_scanner.py 2>/dev/null || true"
 pkill -9 -f db_logger.py 2>/dev/null || true
 sleep 1
 echo "  [OK] Stale processes cleaned."
