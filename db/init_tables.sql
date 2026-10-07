@@ -24,5 +24,7 @@ CREATE TABLE IF NOT EXISTS thermometer_telemetry (
 );
 
 CREATE INDEX IF NOT EXISTS idx_telemetry_mac_time ON thermometer_telemetry(device_mac, recorded_at DESC);
+CREATE INDEX IF NOT EXISTS idx_telemetry_name_time ON thermometer_telemetry(device_name, recorded_at);
+CREATE INDEX IF NOT EXISTS idx_telemetry_covering ON thermometer_telemetry(device_name, recorded_at) INCLUDE (temperature, humidity);
 
 

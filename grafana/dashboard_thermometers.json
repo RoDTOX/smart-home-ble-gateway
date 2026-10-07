@@ -123,7 +123,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT recorded_at AS \"time\", temperature AS \"Temperature (°C)\" FROM thermometer_telemetry WHERE device_name = 'Kids Room' AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
+          "rawSql": "SELECT $__timeGroupAlias(recorded_at, $__interval), ROUND(AVG(temperature)::numeric, 2) AS \"Temperature (°C)\" FROM thermometer_telemetry WHERE device_name = 'Kids Room' AND $__timeFilter(recorded_at) GROUP BY 1 ORDER BY 1 ASC",
           "refId": "A"
         },
         {
@@ -134,7 +134,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT recorded_at AS \"time\", humidity AS \"Humidity (%)\" FROM thermometer_telemetry WHERE device_name = 'Kids Room' AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
+          "rawSql": "SELECT $__timeGroupAlias(recorded_at, $__interval), ROUND(AVG(humidity)::numeric, 2) AS \"Humidity (%)\" FROM thermometer_telemetry WHERE device_name = 'Kids Room' AND $__timeFilter(recorded_at) GROUP BY 1 ORDER BY 1 ASC",
           "refId": "B"
         }
       ],
@@ -255,7 +255,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT recorded_at AS \"time\", temperature AS \"Temperature (°C)\" FROM thermometer_telemetry WHERE device_name = 'Living Room' AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
+          "rawSql": "SELECT $__timeGroupAlias(recorded_at, $__interval), ROUND(AVG(temperature)::numeric, 2) AS \"Temperature (°C)\" FROM thermometer_telemetry WHERE device_name = 'Living Room' AND $__timeFilter(recorded_at) GROUP BY 1 ORDER BY 1 ASC",
           "refId": "A"
         },
         {
@@ -266,7 +266,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT recorded_at AS \"time\", humidity AS \"Humidity (%)\" FROM thermometer_telemetry WHERE device_name = 'Living Room' AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
+          "rawSql": "SELECT $__timeGroupAlias(recorded_at, $__interval), ROUND(AVG(humidity)::numeric, 2) AS \"Humidity (%)\" FROM thermometer_telemetry WHERE device_name = 'Living Room' AND $__timeFilter(recorded_at) GROUP BY 1 ORDER BY 1 ASC",
           "refId": "B"
         }
       ],
@@ -387,7 +387,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT recorded_at AS \"time\", temperature AS \"Temperature (°C)\" FROM thermometer_telemetry WHERE device_name = 'Bathroom' AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
+          "rawSql": "SELECT $__timeGroupAlias(recorded_at, $__interval), ROUND(AVG(temperature)::numeric, 2) AS \"Temperature (°C)\" FROM thermometer_telemetry WHERE device_name = 'Bathroom' AND $__timeFilter(recorded_at) GROUP BY 1 ORDER BY 1 ASC",
           "refId": "A"
         },
         {
@@ -398,7 +398,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT recorded_at AS \"time\", humidity AS \"Humidity (%)\" FROM thermometer_telemetry WHERE device_name = 'Bathroom' AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
+          "rawSql": "SELECT $__timeGroupAlias(recorded_at, $__interval), ROUND(AVG(humidity)::numeric, 2) AS \"Humidity (%)\" FROM thermometer_telemetry WHERE device_name = 'Bathroom' AND $__timeFilter(recorded_at) GROUP BY 1 ORDER BY 1 ASC",
           "refId": "B"
         }
       ],
@@ -464,7 +464,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT recorded_at AS \"time\", device_name, temperature FROM thermometer_telemetry WHERE device_name IN ($device) AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
+          "rawSql": "SELECT $__timeGroupAlias(recorded_at, $__interval), device_name, ROUND(AVG(temperature)::numeric, 2) AS \"temperature\" FROM thermometer_telemetry WHERE device_name IN ($device) AND $__timeFilter(recorded_at) GROUP BY 1, 2 ORDER BY 1 ASC",
           "refId": "A"
         }
       ],
@@ -530,7 +530,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT recorded_at AS \"time\", device_name, humidity FROM thermometer_telemetry WHERE device_name IN ($device) AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
+          "rawSql": "SELECT $__timeGroupAlias(recorded_at, $__interval), device_name, ROUND(AVG(humidity)::numeric, 2) AS \"humidity\" FROM thermometer_telemetry WHERE device_name IN ($device) AND $__timeFilter(recorded_at) GROUP BY 1, 2 ORDER BY 1 ASC",
           "refId": "A"
         }
       ],
@@ -596,7 +596,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT recorded_at AS \"time\", device_name, battery_level AS \"Battery (%)\" FROM thermometer_telemetry WHERE device_name IN ($device) AND $__timeFilter(recorded_at) ORDER BY recorded_at ASC",
+          "rawSql": "SELECT $__timeGroupAlias(recorded_at, $__interval), device_name, ROUND(AVG(battery_level)::numeric, 0) AS \"Battery (%)\" FROM thermometer_telemetry WHERE device_name IN ($device) AND $__timeFilter(recorded_at) GROUP BY 1, 2 ORDER BY 1 ASC",
           "refId": "A"
         }
       ],
@@ -713,5 +713,5 @@
   "timezone": "browser",
   "title": "Room Thermometers Telemetry",
   "uid": "a63cb8c2-987e-47c3-a453-27c9a2eaf01b",
-  "version": 17
+  "version": 18
 }
